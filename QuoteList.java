@@ -87,11 +87,13 @@ public class QuoteList
       return quoteArray.get (randomGen.nextInt (quoteArray.size()));
    }
 
+   // Prints quotes list in a readable form.
    public String displayQuoteList ()
    {
       String out = "";
       for (int i = 0; i < this.getSize(); i++)
       {
+         // use displayQuote() method to display each quote from Quote.java
          out += this.getQuote(i).displayQuote();
          out += "\n";
       }

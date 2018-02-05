@@ -50,6 +50,7 @@ public class Quote
       return "Quote {" + "author='" + author + '\'' + ", quoteText='" + quoteText + '\'' + '}';
    }
 
+   // Displays quote in a reader-friendy representation
    public String displayQuote() {
       return "\t" + this.getQuoteText() + "\n\t\t–" + this.getAuthor();
    }
