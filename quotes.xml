@@ -44,4 +44,8 @@
 <quote-text>Maybe it will work.</quote-text>
 <author>Test</author>
 </quote>
+<quote>
+<quote-text>This quotes has proper capitalization and punctuation!</quote-text>
+<author>Test</author>
+</quote>
 </quote-list>

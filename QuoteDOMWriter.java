@@ -106,7 +106,11 @@ public class QuoteDOMWriter {
 
     // Check integrity of input author by checking 
     // that all words in author name are capitalized
+    // and that author is at least 3 letters long
     private boolean checkValidAuthor(String author) {
+        if (author.length() <= 2) {
+            return false;
+        }
         String[] name = author.split(" ");
         for (int i = 0; i < name.length; i++) {
             if (startsWithUpperCase(name[i]) == false) {
@@ -123,7 +127,7 @@ public class QuoteDOMWriter {
 
     // Check input quoteText is longer than 2 words
     private boolean longerThanTwoWords(String quoteText) {
-        return (quoteText.split(" ").length > 2);
+        return (quoteText.length() != 0 && quoteText.split(" ").length > 2);
     }
 
     // Check input quoteText ends with a punctuation
