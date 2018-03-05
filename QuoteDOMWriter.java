@@ -21,7 +21,7 @@ public class QuoteDOMWriter {
     private Document doc;
 
     // XML file that has quotes
-    private static final String quoteFilename = "quotes/quotes.xml";
+    private static final String quoteFilename = "./quotes.xml";
 
     public QuoteDOMWriter() {
         try {
@@ -34,7 +34,7 @@ public class QuoteDOMWriter {
         }
     }
 
-    public boolean writeNewQuote(QuoteList oldQuoteList, String newQuoteText, String newAuthor) {
+    public boolean writeNewQuote(QuoteList oldQuoteList, String newQuoteText, String newAuthor, String newKeyword) {
         // Check integrity of quote and author before commencing
         if (checkValidQuote(newQuoteText) && checkValidAuthor(newAuthor)) {
 
@@ -45,16 +45,20 @@ public class QuoteDOMWriter {
             for (int i = 0; i < oldQuoteList.getSize(); i++) {
                 String author = oldQuoteList.getQuote(i).getAuthor();
                 String quoteText = oldQuoteList.getQuote(i).getQuoteText();
-                this.createQuote(doc, root, quoteText, author);
+                String keywordText = oldQuoteList.getQuote(i).getKeyword();
+                if (keywordText == null || keywordText.length() <= 1) {
+                    keywordText = " ";
+                }
+                this.createQuote(doc, root, quoteText, author, keywordText);
             }
             // add new quote to xml file
-            this.createQuote(doc, root, newQuoteText, newAuthor);
+            this.createQuote(doc, root, newQuoteText, newAuthor, newKeyword);
 
             // add root to the doc
             doc.appendChild(root);
 
             try {
-                // write data to XML using Transformer factory 
+                // write data to XML using Transformer factory
                 TransformerFactory transformerFactory = TransformerFactory.newInstance();
                 Transformer transformer = transformerFactory.newTransformer();
 
@@ -62,24 +66,24 @@ public class QuoteDOMWriter {
                 transformer.setOutputProperty(OutputKeys.INDENT, "yes");
                 transformer.setOutputProperty(OutputKeys.METHOD, "xml");
 
-                // dom source si 
+                // dom source si
                 DOMSource source = new DOMSource(doc);
 
                 //create the new XML file (which replaces old xml file)
                 StreamResult file = new StreamResult(new FileOutputStream(quoteFilename));
 
-                //write data to the new XML file 
+                //write data to the new XML file
                 transformer.transform(source, file);
                 return true; // return true when quote is added successfully
             } catch (Exception e) {
                 System.out.println(e.getMessage());
-                return false; // error occured with writing 
+                return false; // error occured with writing
             }
         }
         return false; // error with integrity of quote/author
     }
 
-    private void createQuote(Document doc, Element root, String quoteText, String author) {
+    private void createQuote(Document doc, Element root, String quoteText, String author, String keyword) {
         // create quote tag
         Element quoteElement = doc.createElement("quote");
 
@@ -91,9 +95,14 @@ public class QuoteDOMWriter {
         Element authorElement = doc.createElement("author");
         authorElement.appendChild(doc.createTextNode(author));
 
-        // add quote-text and author elements to quote 
+        // create keyword tag element and add its text content
+        Element keywordElement = doc.createElement("keyword");
+        keywordElement.appendChild(doc.createTextNode(keyword));
+
+        // add quote-text and author elements to quote
         quoteElement.appendChild(quoteTextElement);
         quoteElement.appendChild(authorElement);
+        quoteElement.appendChild(keywordElement);
 
         // append quote to root
         root.appendChild(quoteElement);
@@ -104,7 +113,7 @@ public class QuoteDOMWriter {
         return startsWithUpperCase(quoteText) && longerThanTwoWords(quoteText) && endsWithPunctuation(quoteText);
     }
 
-    // Check integrity of input author by checking 
+    // Check integrity of input author by checking
     // that all words in author name are capitalized
     // and that author is at least 3 letters long
     private boolean checkValidAuthor(String author) {

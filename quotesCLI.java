@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class quotesCLI {
     // XML file that has quotes
-    private static final String quoteFileName = "quotes/quotes.xml";
+    private static final String quoteFileName = "./quotes.xml";
 
     // Stores all the quotes from the xml file
     private static QuoteList quoteList;
@@ -31,7 +31,8 @@ public class quotesCLI {
             System.out.println("(2) Find quotes by content");
             System.out.println("(3) Find quotes by author");
             System.out.println("(4) Find quotes by both author & content");
-            System.out.println("(5) Add new quote");
+            System.out.println("(5) Find quotes using a keyword");
+            System.out.println("(6) Add new quote");
             System.out.println("(0) Exit Program");
             int input = Integer.parseInt(in.nextLine());
             switch (input) {
@@ -62,18 +63,32 @@ public class quotesCLI {
             // Search quotes by content and author name and display results
             case 4:
                 System.out.println("Insert search terms followed by enter");
-                searchResults = quoteList.search(in.nextLine(), 2); // nextLine?
+                searchResults = quoteList.search(in.nextLine(), 2);
+                System.out.println("Search Results: ");
+                System.out.println(searchResults.displayQuoteList());
+                break;
+
+            // Search quotes by keywords and display results
+            case 5:
+                System.out.println("Insert one keyword followed by enter");
+                searchResults = quoteList.search(in.nextLine(), 3);
                 System.out.println("Search Results: ");
                 System.out.println(searchResults.displayQuoteList());
                 break;
 
             // Add new quote to XML file
-            case 5:
+            case 6:
                 System.out.println("Insert the text of the quote");
                 String quoteText = in.nextLine();
                 System.out.println("Insert the name of the author");
                 String author = in.nextLine();
-                if (qWriter.writeNewQuote(quoteList, quoteText, author)) {
+                System.out.println("Insert a keyword for the quote (optional)");
+                String keyword = in.nextLine();
+
+                if (keyword.length() <= 1) {
+                    keyword = "";
+                }
+                if (qWriter.writeNewQuote(quoteList, quoteText, author, keyword)) {
                     System.out.println("Quote successfully saved!");
                 } else {
                     System.out.print("Error: Ensure proper Capitalization for quote and author. ");
